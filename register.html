@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+  }
+  body {
+      background-image: url(https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg);
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      opacity: .95;
+  }
+  
+  form {
+      width: auto;
+      height: auto;
+      border-radius: 10px;
+      margin: 2% auto;
+      box-shadow: 0 9px 50px hsla(20, 67%, 75%, 0.31);
+      padding: 2%;
+      background-color: gainsboro;
+  }
+  input{
+      width: 250px;
+      background-color: #fff;
+      color: #333;
+    }
+  input:focus {
+      transform: translateX(-2px);
+      border-radius: 5px;
+  }
+  </style>
+    <div class="login">
+        <div class="login-screen">
+            <div class="app-title">
+                <h1>Sign-Up</h1>
+            </div>
+
+            <form method="POST" action="" class="control-group">
+              {% csrf_token %}
+                <div class="control-group">
+                {{ form.username }}
+                </div>
+                <div class="control-group">
+                {{ form.email}}
+                </div>   
+                 <div class="control-group">
+                {{ form.password1 }}
+                </div> 
+                 <div class="control-group">
+                {{ form.password2 }}
+                </div> 
+                <input class="btn btn-primary btn-large btn-block" type="submit" name="Register">
+            </form>
+            
+            <div class="d-flex justify-content-center links mt-8">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+          </div>
+          {{ form.errors }}
+        </div>
+    </div>
+    <script>
+    //Query All input fields
+    var form_fields = document.getElementsByTagName('input')
+    form_fields[1].placeholder='@Username';
+    form_fields[2].placeholder='Email Adress';
+    form_fields[3].placeholder='Enter password';
+    form_fields[4].placeholder='Re-enter Password';
+
+    for (var field in form_fields){ 
+      form_fields[field].className += ' form-control'
+    }
+  </script>
+{% endblock content %}

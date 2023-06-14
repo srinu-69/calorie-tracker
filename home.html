@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav class="navbar" id="navbar-primary">
+  <div class="container">
+    <a href="{% url "home" %}"> <img src="https://cdn4.iconfinder.com/data/icons/body-and-fitness-1/32/Body_And_Fitness_Calorie_Calculator-1024.png" style="width: 80%;"></a>
+    <ul class="nav" id="hda">
+      {% with url_name=request.resolver_match.url_name %}
+      <li class="nav-item"><a class="nav-link  {% if url_name == 'home' %} active{% endif %}" href={% url "home" %} style="padding-left: 55px;font-size: 80%;">Home</a></li>
+      <li class="nav-item"><a class="nav-link {% if url_name == 'add_food' %} active{% endif %}" href={% url "add_food" %} style="padding-left: 35px;font-size: 80%;">Add Food Item</a></li>
+      <li class="nav-item"><a class="nav-link {% if url_name == 'profile' %} active{% endif %}" href={% url "profile" %} style="padding-left: 35px;font-size: 80%;">Profile</a></li>
+      {% endwith %}
+      <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}" style="padding-left: 35px;font-size: 80%;">Logout</a></li>
+    </ul>
+    <ul class="nav">
+      <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Hello, {{ request.user }}</a></li>
+    </ul>
+  </div>
+</nav>  
+      <div class="card text-white text-center mt-4"  style="border-radius: 20px;">
+        <div class="card-body">
+          <p class="card-text text-center pt-3" style="font-size:22px"> 
+          {% if calorie_goal_status > 0 %}
+          You need  {{ calorie_goal_status }} calories more to reach your goal 
+          {% elif calorie_goal == 0 %}
+          <a href="{% url 'profile' %}"> You have reached your goal , as there is nothing set </a>
+          {% else %}
+          You surpassed your goal by {{ over_calorie }} calories 
+          {% endif %} </p>
+        </div>
+      </div>      
+  <svg id="animated" viewbox="0 0 100 100">
+    {% if red == 0 %}
+    <circle cx="50" cy="50" r="45" fill="#0cba80"/>
+    {% else %}
+    <circle cx="50" cy="50" r="45" fill="#cc1414"/>
+    {% endif %}
+    <path id="progress" fill="none" stroke-linecap="round" stroke-width="5" stroke="#fff"
+          stroke-dasharray="251.2,0"
+          d="M50 10
+             a 40 40 0 0 1 0 80
+             a 40 40 0 0 1 0 -80"/>
+    <text id="count" x="50" y="50" text-anchor="middle" dy="7" font-size="20">{{ calorie_consumed_percentage }}%</text>    
+</svg>
+
+<div class="card text-white text-center mt-4"  style="border-radius: 20px;">
+  <div class="card-body">
+    {{ total_calorie }} / {{ calorie_goal }} calories have been consumed
+  </div>
+</div>
+
+<h1 class="mt-auto mb-auto" style="color: black;padding:10px;background-color:antiquewhite;">All Food items Consumed Today: </h1>
+<div class="container table-responsive py-5"> 
+<table class="table table-bordered table-hover">
+  <thead class="thead-dark">
+    <tr class="text-center">
+      <th scope="col">Food</th>
+      <th scope="col">Calories</th>
+      <th scope="col">Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for food in food_selected_today %}
+    <tr class="text-center">
+      <td> {{ food.food.name }}</td>
+      <td> {{ food.calorie_amount }}</td>
+      <td> {{ food.amount }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<div class="login mt-0">
+  <div class="login-screen">
+      <div class="app-title">
+          <h6 class="heade">Add consumed Food <sub>(Check below table for available items)</sub></h6>
+      </div>
+
+      <form method="POST" action="" class="login-form">
+        {% csrf_token %}
+        <h5 class="form-labels">
+          {{ form.as_p }}
+      </h5>
+          <button class="btn login_btn pt-2 ml-3" type="submit" value="select">Add</button>
+
+      </form>
+  </div>
+
+</div>
+<div class="container-fluid">
+<h1 class="mt-auto mb-auto" style="color: black;padding:10px;background-color:antiquewhite;">All Food Items Available</h1>
+  <table class="table table-bordered text-center">
+      <thead class="thead-dark">
+          <tr>
+              <th scope="col">Food Name</th>
+              <th scope="col">Calories</th>
+              <th scope="col">Quantity</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for food in food_items %}
+          <tr>
+              <td>{{ food.name }}</td>
+              <td>{{ food.calorie }}</td>
+              <td>{{ food.quantity }}</td>
+              
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>  
+</div>
+  <input type="hidden" id="vvv" name="val" value="{{ calorie_consumed_percentage}}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg.js" integrity="sha512-2B4yJ2DGhmYITzY51PcSK5pxQilqi1Cl3wgI8dq8phWjbVAw9SmcaTZp+QsSCdV/xKkxttyYolU0usNNG1ICbQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+      var count = $(('#count'));
+      $({ Counter: 0 }).animate({ Counter: count.text() }, {
+        duration: 3000,
+        easing: 'linear',
+        step: function () {
+          count.text(Math.ceil(this.Counter)+ "%");
+        }
+      });
+
+      var s = Snap('#animated');
+      var progress = s.select('#progress');
+      var vv = document.getElementById("vvv").value;
+      vv=vv*2.512;
+      progress.attr({ 'stroke-dasharray': '0, 251.2'});
+      Snap.animate(0,251.2, function(v) {
+          progress.attr({ 'stroke-dasharray':vv+',251.2'});
+      }, 3000);
+  </script>
+{% endblock content %}

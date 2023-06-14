@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}  
+  <nav class="navbar" id="navbar-primary">
+    <div class="container">
+      <a href="{% url "home" %}"> <img src="https://cdn4.iconfinder.com/data/icons/body-and-fitness-1/32/Body_And_Fitness_Calorie_Calculator-1024.png" style="width: 80%;"></a>
+      <ul class="nav" id="hda">
+        {% with url_name=request.resolver_match.url_name %}
+      <li class="nav-item"><a class="nav-link  {% if url_name == 'home' %} active{% endif %}" href={% url "home" %} style="padding-left: 55px;font-size: 80%;">Home</a></li>
+      <li class="nav-item"><a class="nav-link {% if url_name == 'add_food' %} active{% endif %}" href={% url "add_food" %} style="padding-left: 35px;font-size: 80%;">Add Food Item</a></li>
+      <li class="nav-item"><a class="nav-link {% if url_name == 'profile' %} active{% endif %}" href={% url "profile" %} style="padding-left: 35px;font-size: 80%;">Profile</a></li>
+      {% endwith %}
+      <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}" style="padding-left: 35px;font-size: 80%;">Logout</a></li>
+    </ul>
+      <ul class="nav">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Hello, {{ request.user }}</a></li>
+      </ul>
+    </div>
+  </nav>
+
+<div class="container-fluid">
+          <center>
+            <div class="col-lg-5 card card-body" style="top:20px;padding: 60px;background: linear-gradient(to right, #FFF, rgb(138, 135, 135));border: none;">
+            <form method="POST" action="" class="login-form pt-4">
+              {% csrf_token %}
+                {% for field in form %}
+                <h1 style="color: black;">Calorie Goal For Today</h1>
+                {{ field }}
+                {% endfor %}
+                <button class="btn login_btn profile-submit ml-7" type="submit" value="select">Update</button>
+            </form>
+        </div>
+      </center>
+        <br><br>
+      <center>
+        <div class="col-lg-7">
+          <h1 class="mt-auto mb-auto" style="color: black;padding:10px;background-color:antiquewhite;">Records From Past Week  </h1>
+        <div class="row mt-5">
+        <table class="table text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Calorie Consumed</th>
+                    <th scope="col">Calorie Goal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.total_calorie }}</td>
+                    <td>{{ record.calorie_goal }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>  
+
+    </div>
+    </div>
+    </center>
+     <h1 class="mt-auto mb-auto" style="color: black;padding:10px;background-color:antiquewhite;">All Food Items </h1>
+     <div class="row mt-5">
+      <table class="table text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Food Name</th>
+                    <th scope="col">Calories</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for food in food_items %}
+                <tr>
+                    <td>{{ food.name }}</td>
+                    <td>{{ food.calorie }}</td>
+                    <td>{{ food.quantity }}</td>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'update_food' food.id %}">Update</a></td>                  
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>  
+    </div>
+</div>
+{% endblock content %}

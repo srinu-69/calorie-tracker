@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}  
+  <nav class="navbar" id="navbar-primary">
+    <div class="container">
+      <a href="{% url "home" %}"> <img src="https://cdn4.iconfinder.com/data/icons/body-and-fitness-1/32/Body_And_Fitness_Calorie_Calculator-1024.png" style="width: 80%;"></a>
+      <ul class="nav" id="hda">
+        {% with url_name=request.resolver_match.url_name %}
+      <li class="nav-item"><a class="nav-link  {% if url_name == 'home' %} active{% endif %}" href={% url "home" %} style="padding-left: 55px;font-size: 80%;">Home</a></li>
+      <li class="nav-item"><a class="nav-link {% if url_name == 'add_food' %} active{% endif %}" href={% url "add_food" %} style="padding-left: 35px;font-size: 80%;">Add Food Item</a></li>
+      <li class="nav-item"><a class="nav-link {% if url_name == 'profile' %} active{% endif %}" href={% url "profile" %} style="padding-left: 35px;font-size: 80%;">Profile</a></li>
+      {% endwith %}
+      <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}" style="padding-left: 35px;font-size: 80%;">Logout</a></li>
+    </ul>
+      <ul class="nav">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Hello, {{ request.user }}</a></li>
+      </ul>
+    </div>
+  </nav>
+
+<div class="container">
+<div class="row">
+    <div class="col-lg-6" >
+    <div class="login" >
+        <div class="login-screen" style="background: linear-gradient(to right, #FFF, rgb(138, 135, 135));border: none;">
+            <div class="app-title">
+                <h1 style="color:black;">New food details:</h1>
+            </div>
+            <form method="POST" action="" class="login-form form-inline">
+              {% csrf_token %}
+                {% for field in form %}
+                <h5 class="form-labels">
+                {{ field.label }}
+                </h5>
+                {{ field }}
+                {% endfor %}
+                <input class="btn mt-2" type="submit" value="select">
+            </form>
+        </div>        
+    </div>
+    </div>
+    <center>
+    <div class="col-lg-6 " style="padding-top:70px;">
+    <div class="login">
+        <div class="login-screen" style="background: linear-gradient(to right, #FFF, rgb(138, 135, 135));border: none;">
+              <form method="get">
+                  <h1>{{ myFilter.form }}</h1>
+                  <button class="btn mt-2" type="submit">Search </button>
+              </form> 
+        </div>
+    </div>
+  </div>
+</center>
+</div>
+  <h1 class="mt-auto mb-auto" style="color: black;padding:10px;background-color:antiquewhite;">Added Food Items  </h1>
+        <h1 class="headline">  </h1>
+        <table class="table table-bordered text-center mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Food Name</th>
+                    <th scope="col">Calories</th>
+                    <th scope="col">Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for food in food_items %}
+                <tr>
+                    <td>{{ food.name }}</td>
+                    <td>{{ food.calorie }}</td>
+                    <td>{{ food.quantity }}</td>                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>      
+</div>
+{% endblock content %}
